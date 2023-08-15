@@ -16,6 +16,9 @@ function boardisvalid(board)
     n1 = sum(board.==1)
     n2 = sum(board.==2)
     #@show n1, n2
+
+    return (abs(n1-n2) < 2),n1,n2
+    #=
     iv = n1>=n2
     if !iv
         return iv 
@@ -26,6 +29,7 @@ function boardisvalid(board)
     end
 
     return true,n1,n2
+    =#
 end
 
 export boardisfull
@@ -300,6 +304,24 @@ function fillboard!(board,boardv)
     for i=1:9 
         board[i] = boardv[i]
     end
+end
+
+
+export mirrorpositions
+function mirrorpositions(simresdf::DataFrame)
+    @assert size(simresdf,2) == 9 
+    c1 = map(x->sum(Vector(x).==1),eachrow(simresdf))
+    c2 = map(x->sum(Vector(x).==2),eachrow(simresdf))
+    delta = c1 .- c2 
+    extrema(delta)
+    @assert extrema(delta) == (0,1)
+    #mirror positions
+    mr = deepcopy(Matrix(simresdf))
+    mr[mr.==2] .= 3
+    mr[mr.==1] .= 2
+    mr[mr.==3] .= 1
+    mrdf = DataFrame(mr,:auto)
+return mrdf
 end
 
 end #end module
