@@ -5,9 +5,15 @@ Inspired by an ELI5 question I wrote this small module. See https://www.reddit.c
 
 ## Notes
 * Convention is that Player 1 begins the game
-* This code is simulation based, and thus different from an exhaustive search approach. 
 
 ## Results
+Possible states:
+```
+@time cnt,iswoncnt,isvalidcount,player1haswoncnt = exhaustiveboardpositions()
+(cnt, iswoncnt, isvalidcount, player1haswoncnt) = (19683, 8542, 6046, 4427)
+```
+
+## Simulation based results
 Currently this script results in 958 possible (SIMULATED!) ending board positions
 ```
 @time res = simulategames(1_000_000) #7.6 seconds on my notebook for 1 million simulations

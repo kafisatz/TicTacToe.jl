@@ -83,7 +83,7 @@ function playrandom!(board)
     if n2 == n1
         #player 1 plays
         board[pick] = 1
-    else 
+    else
         #player 2 plays
         board[pick] = 2
     end 
@@ -183,5 +183,54 @@ function simulategames_with_positions(n::Int)
     boardposvector = unique(boardposvector0)
 return res,boardposvector
 end
+
+export exhaustiveboardpositions 
+function exhaustiveboardpositions()
+
+    board = newboard()
+
+    cnt = 0 
+    iswoncnt = 0
+    ivcnt = 0 
+    player1haswoncnt = 0
+
+        vals = [0,1,2]
+        for pos1 in vals 
+            for pos2 in vals 
+                for pos3 in vals 
+                    for pos4 in vals 
+                        for pos5 in vals 
+                            for pos6 in vals 
+                                for pos7 in vals 
+                                    for pos8 in vals 
+                                        for pos9 in vals 
+                                            board[1,1] = pos1
+                                            board[1,2] = pos2
+                                            board[1,3] = pos3
+                                            board[2,1] = pos4
+                                            board[2,2] = pos5
+                                            board[2,3] = pos6
+                                            board[3,1] = pos7
+                                            board[3,2] = pos8
+                                            board[3,3] = pos9
+                                            
+                                            cnt += 1
+                                            ivcnt += boardisvalid(board)[1]
+                                            iw,p = boardiswon(board)
+                                            iswoncnt += iw 
+                                            player1haswoncnt += (iw && p==1)
+                                        end 
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end 
+
+        return cnt,iswoncnt,ivcnt,player1haswoncnt
+end
+
 
 end #end module
