@@ -193,6 +193,7 @@ function exhaustiveboardpositions()
     iswoncnt = 0
     ivcnt = 0 
     player1haswoncnt = 0
+    player2haswoncnt = 0
 
         vals = [0,1,2]
         for pos1 in vals 
@@ -218,7 +219,9 @@ function exhaustiveboardpositions()
                                             ivcnt += boardisvalid(board)[1]
                                             iw,p = boardiswon(board)
                                             iswoncnt += iw 
+                                            error("this serach is most likely not meaningful. After a player has won, the game stops! Thus no more 'additional board positions' are possible")
                                             player1haswoncnt += (iw && p==1)
+                                            player2haswoncnt += (iw && p==2)
                                         end 
                                     end
                                 end
@@ -229,7 +232,7 @@ function exhaustiveboardpositions()
             end
         end 
 
-        return cnt,iswoncnt,ivcnt,player1haswoncnt
+        return cnt,iswoncnt,ivcnt,player1haswoncnt,player2haswoncnt
 end
 
 

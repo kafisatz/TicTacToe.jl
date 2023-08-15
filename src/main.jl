@@ -10,7 +10,8 @@ board[3,3] = 2
 board[1,1] = 1
 board[2,1] = 2
 
-@time cnt,iswoncnt,isvalidcount,player1haswoncnt = exhaustiveboardpositions()
+@time cnt,iswoncnt,isvalidcount,player1haswoncnt,player2haswoncnt = exhaustiveboardpositions()
+player1haswoncnt + player2haswoncnt
 
 @assert boardisvalid(board)[1]
 @assert !(boardiswon(board)[1])
@@ -33,6 +34,3 @@ unique(res) #958 unique ending board positions (10 mio simulations)
 @time res2,bpv = simulategames_with_positions(10_000_000);
 length(unique(bpv)) #5477 possible board positions in total
 
-
-@time cnt,iswoncnt,isvalidcount,player1haswoncnt = exhaustiveboardpositions()
-@show cnt,iswoncnt,isvalidcount,player1haswoncnt
