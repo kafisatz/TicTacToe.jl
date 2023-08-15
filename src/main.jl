@@ -11,6 +11,7 @@ board[1,1] = 1
 board[2,1] = 2
 
 @time cnt,iswoncnt,isvalidcount,player1haswoncnt,player2haswoncnt = exhaustiveboardpositions()
+@show cnt,iswoncnt,isvalidcount,player1haswoncnt,player2haswoncnt 
 player1haswoncnt + player2haswoncnt
 
 @assert boardisvalid(board)[1]

@@ -184,6 +184,26 @@ function simulategames_with_positions(n::Int)
 return res,boardposvector
 end
 
+export number_of_winning_lines
+function number_of_winning_lines(board)
+r1wins = (board[1,1]!=0 && board[1,2]==board[1,3] && board[1,2]==board[1,1])
+r2wins = (board[2,1]!=0 && board[2,2]==board[2,3] && board[2,2]==board[3,1])
+r3wins = (board[3,1]!=0 && board[3,2]==board[3,3] && board[3,2]==board[3,1])
+
+c1wins = (board[1,1]!=0 && board[2,1]==board[3,1] && board[2,1]==board[1,1])
+c2wins = (board[1,2]!=0 && board[2,2]==board[3,2] && board[2,2]==board[1,2])
+c3wins = (board[1,3]!=0 && board[2,3]==board[3,3] && board[2,3]==board[1,3])
+
+d1wins = (board[1,1]!=0 && board[2,2]==board[3,3] && board[2,2]==board[1,1])
+d2wins = (board[2,2]!=0 && board[3,1]==board[1,3] && board[2,2]==board[1,3])
+
+ss =r1wins+r2wins+r3wins  + c1wins + c2wins + c3wins + d1wins + d2wins
+#@assert ss <= 1
+#@assert ss >= 0 
+
+return ss 
+end 
+
 export exhaustiveboardpositions 
 function exhaustiveboardpositions()
 
@@ -216,12 +236,21 @@ function exhaustiveboardpositions()
                                             board[3,3] = pos9
                                             
                                             cnt += 1
-                                            ivcnt += boardisvalid(board)[1]
+                                            nwinlines = number_of_winning_lines(board)
+                                            ivtmp = boardisvalid(board)[1]
+                                            if ivtmp && (nwinlines <=1)
+                                                ivcnt += 1
+                                            end
                                             iw,p = boardiswon(board)
-                                            iswoncnt += iw 
-                                            error("this serach is most likely not meaningful. After a player has won, the game stops! Thus no more 'additional board positions' are possible")
-                                            player1haswoncnt += (iw && p==1)
-                                            player2haswoncnt += (iw && p==2)
+                                            error("something is still off")
+                                            if iw
+                                                @assert nwinlines >= 1
+                                            end
+                                            if (nwinlines <=1)
+                                                iswoncnt += iw 
+                                                player1haswoncnt += (iw && p==1)
+                                                player2haswoncnt += (iw && p==2)    
+                                            end
                                         end 
                                     end
                                 end
