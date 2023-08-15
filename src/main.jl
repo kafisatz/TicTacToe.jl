@@ -26,4 +26,7 @@ board
 simulategame()
 
 @time res = simulategames(1_000_000) #7.6 seconds on my notebook for 1 million simulations
-unique(res) #958 unique results (10 mio simulations)
+unique(res) #958 unique ending board positions (10 mio simulations)
+
+@time res2,bpv = simulategames_with_positions(10_000_000);
+length(unique(bpv)) #5477 possible board positions in total

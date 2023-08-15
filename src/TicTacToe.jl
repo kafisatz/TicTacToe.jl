@@ -113,6 +113,24 @@ function playuntilfinished!(board)
     return iswon,isdraw,winningplayer
 end
 
+
+export playuntilfinished_with_board_position!
+function playuntilfinished_with_board_position!(board)
+    iswon,isdraw,winningplayer = evaluateboard(board)
+    isfinished = iswon || isdraw
+
+    boardposvector = Vector{MMatrix{3, 3, Int64, 9}}(undef,0)
+    while !isfinished
+        playrandom!(board)
+        iswon,isdraw,winningplayer = evaluateboard(board)
+        push!(boardposvector,deepcopy(board))
+        isfinished = iswon || isdraw
+    end
+    @assert isfinished
+    return boardposvector,iswon,isdraw,winningplayer
+end
+
+
 export evaluateboard
 function evaluateboard(board)
     isdraw = false
@@ -135,6 +153,14 @@ function simulategame()
     return board,iswon,isdraw,winningplayer
 end
 
+export simulategame_with_positions
+function simulategame_with_positions() 
+    board = newboard()
+    boardposv,iswon,isdraw,winningplayer = playuntilfinished_with_board_position!(board)
+    return boardposv,iswon,isdraw,winningplayer
+end
+
+
 export simulategames
 function simulategames(n::Int)
     res = Vector{MMatrix{3, 3, Int64, 9}}(undef,n)
@@ -143,6 +169,19 @@ function simulategames(n::Int)
         res[i] = board
     end
 return res
+end
+
+export simulategames_with_positions
+function simulategames_with_positions(n::Int)
+    res = Vector{MMatrix{3, 3, Int64, 9}}(undef,n)
+    boardposvector0 = Vector{MMatrix{3, 3, Int64, 9}}(undef,0)
+    for i=1:n
+        boardposv,iswon,isdraw,winningplayer = simulategame_with_positions()
+        append!(boardposvector0,boardposv)
+        res[i] = deepcopy(boardposv[end])
+    end
+    boardposvector = unique(boardposvector0)
+return res,boardposvector
 end
 
 end #end module
