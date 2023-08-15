@@ -176,6 +176,7 @@ export simulategames_with_positions
 function simulategames_with_positions(n::Int)
     res = Vector{MMatrix{3, 3, Int64, 9}}(undef,n)
     boardposvector0 = Vector{MMatrix{3, 3, Int64, 9}}(undef,0)
+    append!(boardposvector0,[newboard()])
     for i=1:n
         boardposv,iswon,isdraw,winningplayer = simulategame_with_positions()
         append!(boardposvector0,boardposv)
@@ -198,11 +199,24 @@ c3wins = (board[1,3]!=0 && board[2,3]==board[3,3] && board[2,3]==board[1,3])
 d1wins = (board[1,1]!=0 && board[2,2]==board[3,3] && board[2,2]==board[1,1])
 d2wins = (board[2,2]!=0 && board[3,1]==board[1,3] && board[2,2]==board[1,3])
 
-ss =r1wins+r2wins+r3wins  + c1wins + c2wins + c3wins + d1wins + d2wins
+if r1wins +r2wins+r3wins > 1
+    return false
+end 
+
+if (c1wins+c2wins+c3wins) > 1
+    return false
+end 
+
+#r1 and c1 can 'win' if top left entry is the last entry, e.g.
+#boardv = [     1      1      1      1      2      2      1      2      2][:]
+
+#the same holds true for d1wins && d2wins (interseciton is 1 point) and the other combinations
+
+return true
+#ss = r1wins + r2wins + r3wins  + c1wins + c2wins + c3wins + d1wins + d2wins
 #@assert ss <= 1
 #@assert ss >= 0 
 
-return ss 
 end 
 
 export exhaustiveboardpositions 
@@ -240,26 +254,23 @@ function exhaustiveboardpositions()
                                             board[3,3] = pos9
                                             
                                             cnt += 1
-                                            nwinlines = number_of_winning_lines(board)
+                                            isvalid2 = number_of_winning_lines(board)
                                             ivtmp = boardisvalid(board)[1]
-                                            if ivtmp && (nwinlines <=1)
+                                            if ivtmp && (isvalid2)
                                                 ivcnt += 1
                                             end
                                             iw,p = boardiswon(board)
-                                            if iw
-                                                @assert nwinlines >= 1
-                                            end
                                             iswon,isdraw,winningplayer = evaluateboard(board)
                                             @assert iswon == iw
                                             isdrawcnt += isdraw
-                                            if (nwinlines <=1)
+                                            if (isvalid2)
                                                 iswoncnt += iw 
                                                 player1haswoncnt += (iw && p==1)
                                                 player2haswoncnt += (iw && p==2)    
                                             end
 
                                             df = boarddf(board)
-                                            df2 = DataFrame(is_reachable = ivtmp && (nwinlines<=1), is_won = iswon,is_draw = isdraw,winning_player = winningplayer)
+                                            df2 = DataFrame(is_reachable = ivtmp && (isvalid2), is_won = iswon,is_draw = isdraw,winning_player = winningplayer)
                                             append!(resdf,hcat(df,df2))
                                             
                                         end 
@@ -279,6 +290,16 @@ export boarddf
 function boarddf(board)
     df = DataFrame(boardv = reshape(board,1,9)[:])
     return permutedims(df)
+end
+
+
+export fillboard!
+function fillboard!(board,boardv)
+    @assert length(board) == 9
+    @assert length(boardv) == 9
+    for i=1:9 
+        board[i] = boardv[i]
+    end
 end
 
 end #end module

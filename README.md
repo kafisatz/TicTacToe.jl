@@ -9,21 +9,17 @@ Inspired by an ELI5 question I wrote this small module. See https://www.reddit.c
 ## Results
 Possible states, exhaustive search:
 ```
-
-julia> @time cnt,iswoncnt,isvalidcount,player1haswoncnt,player2haswoncnt = exhaustiveboardpositions()
-  0.022254 seconds (377.36 k allocations: 24.655 MiB, 39.05% gc time)
-(19683, 6220, 5868, 3110, 3110)
-
-julia> @show cnt,iswoncnt,isvalidcount,player1haswoncnt,player2haswoncnt
-(cnt, iswoncnt, isvalidcount, player1haswoncnt, player2haswoncnt) = (19683, 6220, 5868, 3110, 3110)
-(19683, 6220, 5868, 3110, 3110)
-
-julia> player1haswoncnt + player2haswoncnt
-6220
+@time  resdf,cnt,iswoncnt,valid_position_count,player1haswoncnt,player2haswoncnt,isdrawcnt = exhaustiveboardpositions();
+resdf
+@show cnt,iswoncnt,valid_position_count,player1haswoncnt,player2haswoncnt,isdrawcnt
+resdf[!,:is_won_and_reachable] = map(x->x.is_won && x.is_reachable,eachrow(resdf))
+resdf[!,:is_draw_and_reachable] = map(x->x.is_draw && x.is_reachable,eachrow(resdf))
+@show is_reachable_and_won = sum(resdf.is_won_and_reachable) #1332 (verus 'Positions where someone wins: 1794' in the blog post)
+@show valid_position_count,is_reachable_and_won
 ```
 
 ## Simulation based results
-Currently this script results in 958 possible (SIMULATED!) ending board positions
+Currently this script results in 958 possible (SIMULATED!) ending board positions, assuming Player 1 always starts the game
 ```
 @time res = simulategames(1_000_000) #7.6 seconds on my notebook for 1 million simulations
 unique(res) #958 unique results (10 mio simulations)
