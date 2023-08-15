@@ -7,10 +7,19 @@ Inspired by an ELI5 question I wrote this small module. See https://www.reddit.c
 * Convention is that Player 1 begins the game
 
 ## Results
-Possible states:
+Possible states, exhaustive search:
 ```
-@time cnt,iswoncnt,isvalidcount,player1haswoncnt = exhaustiveboardpositions()
-(cnt, iswoncnt, isvalidcount, player1haswoncnt) = (19683, 8542, 6046, 4427)
+
+julia> @time cnt,iswoncnt,isvalidcount,player1haswoncnt,player2haswoncnt = exhaustiveboardpositions()
+  0.022254 seconds (377.36 k allocations: 24.655 MiB, 39.05% gc time)
+(19683, 6220, 5868, 3110, 3110)
+
+julia> @show cnt,iswoncnt,isvalidcount,player1haswoncnt,player2haswoncnt
+(cnt, iswoncnt, isvalidcount, player1haswoncnt, player2haswoncnt) = (19683, 6220, 5868, 3110, 3110)
+(19683, 6220, 5868, 3110, 3110)
+
+julia> player1haswoncnt + player2haswoncnt
+6220
 ```
 
 ## Simulation based results

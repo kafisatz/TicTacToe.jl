@@ -187,7 +187,7 @@ end
 export number_of_winning_lines
 function number_of_winning_lines(board)
 r1wins = (board[1,1]!=0 && board[1,2]==board[1,3] && board[1,2]==board[1,1])
-r2wins = (board[2,1]!=0 && board[2,2]==board[2,3] && board[2,2]==board[3,1])
+r2wins = (board[2,1]!=0 && board[2,2]==board[2,3] && board[2,2]==board[2,1])
 r3wins = (board[3,1]!=0 && board[3,2]==board[3,3] && board[3,2]==board[3,1])
 
 c1wins = (board[1,1]!=0 && board[2,1]==board[3,1] && board[2,1]==board[1,1])
@@ -242,7 +242,6 @@ function exhaustiveboardpositions()
                                                 ivcnt += 1
                                             end
                                             iw,p = boardiswon(board)
-                                            error("something is still off")
                                             if iw
                                                 @assert nwinlines >= 1
                                             end
