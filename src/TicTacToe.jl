@@ -1,5 +1,6 @@
 module TicTacToe
 
+using DataFrames
 using StaticArrays
 #convention Player1 begins
 # Write your package code here.
@@ -214,6 +215,9 @@ function exhaustiveboardpositions()
     ivcnt = 0 
     player1haswoncnt = 0
     player2haswoncnt = 0
+    isdrawcnt = 0
+
+    resdf = DataFrame() 
 
         vals = [0,1,2]
         for pos1 in vals 
@@ -245,11 +249,19 @@ function exhaustiveboardpositions()
                                             if iw
                                                 @assert nwinlines >= 1
                                             end
+                                            iswon,isdraw,winningplayer = evaluateboard(board)
+                                            @assert iswon == iw
+                                            isdrawcnt += isdraw
                                             if (nwinlines <=1)
                                                 iswoncnt += iw 
                                                 player1haswoncnt += (iw && p==1)
                                                 player2haswoncnt += (iw && p==2)    
                                             end
+
+                                            df = boarddf(board)
+                                            df2 = DataFrame(is_reachable = ivtmp && (nwinlines<=1), is_won = iswon,is_draw = isdraw,winning_player = winningplayer)
+                                            append!(resdf,hcat(df,df2))
+                                            
                                         end 
                                     end
                                 end
@@ -260,8 +272,13 @@ function exhaustiveboardpositions()
             end
         end 
 
-        return cnt,iswoncnt,ivcnt,player1haswoncnt,player2haswoncnt
+        return resdf,cnt,iswoncnt,ivcnt,player1haswoncnt,player2haswoncnt,isdrawcnt
 end
 
+export boarddf
+function boarddf(board)
+    df = DataFrame(boardv = reshape(board,1,9)[:])
+    return permutedims(df)
+end
 
 end #end module
