@@ -30,7 +30,7 @@ CSV.write(raw"C:\temp\resdf.csv",resdf)
 unique(res) #958 unique ending board positions (10 mio simulations)
 
 @time res2,bpv = simulategames_with_positions(10_000_000);
-@time res2,bpv = simulategames_with_positions(1_000_000);
+@time res2,bpv = simulategames_with_positions(10_000_000);
 length(unique(bpv)) #5478 possible board positions in total (player 1 beginning!)
 simresdf0 = mapreduce(x->boarddf(x),vcat,bpv)
 mr = mirrorpositions(simresdf0)
