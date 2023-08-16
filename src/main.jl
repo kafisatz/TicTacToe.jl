@@ -1,6 +1,5 @@
 using Revise
 using TicTacToe
-using Folds 
 using DataFrames
 using StaticArrays
 using BenchmarkTools
