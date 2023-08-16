@@ -187,7 +187,7 @@ function simulategames_with_positions(n::Int)
         res[i] = deepcopy(boardposv[end])
     end
     boardposvector = unique(boardposvector0)
-return res,boardposvector
+return boardposvector
 end
 
 export number_of_winning_lines
@@ -257,24 +257,48 @@ function exhaustiveboardpositions()
                                             board[3,2] = pos8
                                             board[3,3] = pos9
                                             
+                                            board_is_valid = true
                                             cnt += 1
                                             isvalid2 = number_of_winning_lines(board)
-                                            ivtmp = boardisvalid(board)[1]
-                                            if ivtmp && (isvalid2)
-                                                ivcnt += 1
+                                            if !isvalid2 
+                                                board_is_valid = false
+                                            end
+                                            ivtmp,n1,n2 = boardisvalid(board)
+                                            if !ivtmp 
+                                                board_is_valid = false
                                             end
                                             iw,p = boardiswon(board)
                                             iswon,isdraw,winningplayer = evaluateboard(board)
                                             @assert iswon == iw
                                             isdrawcnt += isdraw
-                                            if (isvalid2)
+                                            #it is impossible for the winning player to have fewer entries on the board than the losing player
+                                            #if the losing player started the game, the winning player will have the same number of entries on the board as the losing player 
+                                            #if the winning player started the game they will have one more entry on the board than the losing player
+                                            if iw 
+                                                if winningplayer == 2
+                                                    if n2 < n1
+                                                        board_is_valid = false
+                                                    end
+                                                else 
+                                                    @assert winningplayer == 1 
+                                                    if n1 < n2
+                                                        board_is_valid = false
+                                                    end
+                                                end
+                                            end
+
+                                            if board_is_valid
+                                                ivcnt += 1
+                                            end
+                                            
+                                            if board_is_valid
                                                 iswoncnt += iw 
                                                 player1haswoncnt += (iw && p==1)
                                                 player2haswoncnt += (iw && p==2)    
                                             end
 
                                             df = boarddf(board)
-                                            df2 = DataFrame(is_reachable = ivtmp && (isvalid2), is_won = iswon,is_draw = isdraw,winning_player = winningplayer)
+                                            df2 = DataFrame(is_reachable = board_is_valid, is_won = iswon,is_draw = isdraw,winning_player = winningplayer)
                                             append!(resdf,hcat(df,df2))
                                             
                                         end 
@@ -322,6 +346,19 @@ function mirrorpositions(simresdf::DataFrame)
     mr[mr.==3] .= 1
     mrdf = DataFrame(mr,:auto)
 return mrdf
+end
+
+function mirrorpositions(board::MMatrix)
+    m = deepcopy(board)
+    @assert length(m) ==9
+    for i=1:9 
+        if board[i] == 1 
+            m[i] =2
+        elseif board[i]==2
+            m[i] =1
+        end
+    end
+    return m 
 end
 
 end #end module
